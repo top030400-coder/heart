@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하츠 ✦</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { padding: 0; }
+    .stage { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+
+    /* ===== 히어로 (풀블리드) ===== */
+    .hero {
+      position: relative; text-align: center;
+      padding: 48px 22px 40px;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 0%, #dcebfb 0%, transparent 70%),
+        linear-gradient(180deg, #e7f1fb 0%, var(--ice-bg) 100%);
+    }
+    .hero-wave {
+      position: absolute; left: 0; right: 0; bottom: -1px; z-index: -1;
+      width: 100%; height: 60px; display: block;
+    }
+    .eyebrow {
+      font-family: var(--serif); font-size: 12px; letter-spacing: 4px;
+      color: var(--ice); text-transform: uppercase; margin-bottom: 18px;
+    }
+    .portrait {
+      width: 200px; height: 200px; margin: 0 auto 22px;
+      border-radius: 50%; overflow: hidden; position: relative;
+      border: 7px solid #fff;
+      box-shadow: 0 18px 44px rgba(47,107,179,0.28);
+      background: linear-gradient(155deg, #eaf3fc, #cfe4f8);
+      display: flex; align-items: center; justify-content: center; font-size: 64px;
+    }
+    .portrait img { width: 100%; height: 100%; object-fit: cover; }
+    .portrait-ring {
+      position: absolute; inset: -16px; border-radius: 50%;
+      border: 1.5px dashed rgba(91,159,224,0.4); z-index: 2; pointer-events: none;
+    }
+    .hero-star { position: absolute; top: 30px; font-size: 20px; color: var(--ice); opacity: 0.7; }
+    .quote {
+      font-family: var(--hand); font-weight: 700;
+      font-size: clamp(26px, 7vw, 34px); color: var(--ice-ink);
+      line-height: 1.5; margin-bottom: 10px;
+    }
+    .hero-name {
+      font-family: var(--serif); font-size: 13px; letter-spacing: 3px;
+      color: var(--silver);
+    }
+    .hero-sub {
+      display: inline-block; margin-top: 14px;
+      font-family: var(--hand); font-size: 18px; color: var(--ice-deep);
+      background: rgba(255,255,255,0.7); border: 1px solid var(--ice-light);
+      padding: 4px 16px; border-radius: 999px;
+    }
+    .hero-sub:empty { display: none; }
+
+    /* ===== 섹션 공통 ===== */
+    .sec { padding: 34px 24px; position: relative; }
+    .sec + .sec { border-top: 1px solid var(--ice-light); }
+    .sec-label {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--serif); font-size: 18px; font-weight: 700;
+      color: var(--ice-ink); margin-bottom: 22px;
+    }
+    .sec-label .mk {
+      font-size: 13px; color: #fff; background: var(--ice);
+      width: 26px; height: 26px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .sec-label .ln { flex: 1; height: 1px; background: var(--ice-light); }
+
+    /* 말풍선 */
+    .speech {
+      font-family: var(--hand); font-size: 22px; line-height: 1.7;
+      color: var(--ice-deep); white-space: pre-wrap;
+      background: var(--ice-soft); border-radius: 4px 18px 18px 18px;
+      padding: 18px 20px; position: relative;
+    }
+
+    /* 프로필 명세 (라인 리스트) */
+    .spec { display: flex; flex-direction: column; }
+    .spec-row {
+      display: flex; align-items: baseline; gap: 16px;
+      padding: 13px 2px; border-bottom: 1px solid var(--ice-light);
+    }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-key {
+      width: 76px; flex-shrink: 0; font-size: 12px; font-weight: 700;
+      color: var(--ice); letter-spacing: 1px;
+    }
+    .spec-val { font-size: 17px; color: var(--ice-ink); font-weight: 500; }
+    .spec-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    /* 타임테이블 스트립 */
+    .week { display: flex; gap: 6px; }
+    .wd {
+      flex: 1; text-align: center; padding: 14px 0;
+      border-radius: var(--radius-md); background: var(--ice-soft);
+      color: var(--silver-lt); font-size: 13px; font-weight: 700;
+      transition: all var(--transition);
+    }
+    .wd.on { background: var(--ice); color: #fff; box-shadow: 0 6px 16px rgba(91,159,224,0.3); transform: translateY(-2px); }
+    .times { margin-top: 16px; display: flex; flex-direction: column; gap: 9px; }
+    .trow { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-mid); }
+    .ttag {
+      flex-shrink: 0; width: 48px; text-align: center;
+      font-size: 11px; font-weight: 700; color: var(--ice-deep);
+      background: var(--ice-soft); padding: 5px 0; border-radius: 999px;
+    }
+
+    /* 팬 캐릭터 */
+    .fan { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+    .fan-thumb {
+      width: 96px; height: 96px; border-radius: 20px; flex-shrink: 0;
+      object-fit: cover; border: 1px solid var(--ice-light); background: #fff;
+    }
+    .fan-emoji {
+      width: 96px; height: 96px; border-radius: 20px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 44px;
+      background: var(--ice-soft); border: 1px solid var(--ice-light);
+    }
+    .fan-info { flex: 1; min-width: 140px; }
+    .fan-name { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--ice-ink); }
+    .fan-nick { font-size: 13px; color: var(--silver); margin-top: 4px; }
+
+    /* 좋아/싫어 (비대칭) */
+    .pref { display: flex; flex-direction: column; gap: 18px; }
+    .pref-head { font-family: var(--serif); font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 7px; }
+    .pref-good .pref-head { color: var(--ice-deep); }
+    .pref-bad .pref-head { color: var(--silver); }
+    .pref-good { align-self: flex-start; max-width: 88%; }
+    .pref-bad { align-self: flex-end; max-width: 88%; text-align: right; }
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .pref-bad .chips { justify-content: flex-end; }
+
+    /* TMI */
+    .tmi { display: flex; flex-direction: column; gap: 16px; }
+    .tmi-row { display: flex; gap: 14px; align-items: flex-start; }
+    .tmi-ic {
+      width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0;
+      background: var(--ice-soft); display: flex; align-items: center; justify-content: center; font-size: 19px;
+    }
+    .tmi-k { font-size: 11px; color: var(--ice); font-weight: 700; letter-spacing: 0.5px; }
+    .tmi-v { font-size: 15px; color: var(--ice-ink); margin-top: 2px; }
+
+    /* 링크 (풀폭 리스트) */
+    .links { display: flex; flex-direction: column; gap: 9px; }
+    .lk {
+      display: flex; align-items: center; gap: 12px;
+      padding: 15px 18px; border-radius: var(--radius-md);
+      background: #fff; border: 1px solid var(--ice-light);
+      text-decoration: none; color: var(--ice-ink); font-weight: 600; font-size: 14px;
+      transition: all var(--transition);
+    }
+    .lk:hover { border-color: var(--ice); background: var(--ice-soft); transform: translateX(4px); }
+    .lk .lk-ic { font-size: 18px; width: 24px; text-align: center; }
+    .lk .lk-go { margin-left: auto; color: var(--ice-light); font-size: 16px; }
+    .lk:hover .lk-go { color: var(--ice); }
+
+    .foot { text-align: center; padding: 30px; font-size: 12px; color: var(--silver-lt); }
+  </style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-inner">
+  <a href="index.html" class="nav-logo">하츠 <span class="star">✦</span></a>
+  <a href="index.html" class="active">프로필</a>
+  <a href="notice/">공지</a>
+  <a href="schedule/">일정</a>
+  <a href="work/">업보</a>
+  <a href="diary/">일기</a>
+</div></nav>
+
+<div class="stage">
+
+  <!-- 히어로 -->
+  <header class="hero">
+    <span class="hero-star" style="left:14%">✦</span>
+    <span class="hero-star" style="right:16%;top:64px;font-size:14px">✦</span>
+    <div class="eyebrow">Captain's Log</div>
+    <div class="portrait">
+      <span class="portrait-ring"></span>
+      <img id="portrait" src="" alt="" style="display:none" onerror="this.style.display='none';this.parentNode.querySelector('.ph').style.display='flex'">
+      <span class="ph" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%">⚓</span>
+    </div>
+    <div class="quote" id="quote">안녕! 오늘도<br>와줘서 고마워 ✦</div>
+    <div class="hero-name" id="hero-name">HATZ</div>
+    <div class="hero-sub" id="head-sub"></div>
+    <svg class="hero-wave" viewBox="0 0 720 60" preserveAspectRatio="none"><path d="M0,30 C180,60 360,0 540,24 C630,36 690,40 720,30 L720,60 L0,60 Z" fill="#ffffff" opacity="0.9"/></svg>
+  </header>
+
+  <!-- 하고픈 말 -->
+  <section class="sec" style="background:#fff">
+    <div class="sec-label"><span class="mk">♡</span> 하고픈 말 <span class="ln"></span></div>
+    <div class="speech" id="msg">방송에서 만나요!</div>
+  </section>
+
+  <!-- 소개 -->
+  <section class="sec" style="background:#fff">
+    <div class="sec-label"><span class="mk">✦</span> 하츠를 소개합니다 <span class="ln"></span></div>
+    <div class="spec">
+      <div class="spec-row"><span class="spec-key">이름</span><span class="spec-val" id="info-name">하츠</span></div>
+      <div class="spec-row"><span class="spec-key">생일</span><span class="spec-val" id="info-birth">6월 14일</span></div>
+      <div class="spec-row"><span class="spec-key">키</span><span class="spec-val" id="info-height">166cm</span></div>
+      <div class="spec-row"><span class="spec-key">MBTI</span><span class="spec-val" id="info-mbti">INTJ</span></div>
+      <div class="spec-row"><span class="spec-key">숲 데뷔</span><span class="spec-val" id="info-debut">25.12.13</span></div>
+      <div class="spec-row"><span class="spec-key">한마디로</span><span class="spec-val" id="info-catchphrase">청초한 선장 ⚓</span></div>
+      <div class="spec-row"><span class="spec-key">성격</span><span class="spec-tags" id="info-tags"><span class="tag">차분</span><span class="tag">계획적</span><span class="tag">다정</span></span></div>
+    </div>
+  </section>
+
+  <!-- 방송 시간 -->
+  <section class="sec" style="background:#fff">
+    <div class="sec-label"><span class="mk">✦</span> 방송 시간 <span class="ln"></span></div>
+    <div class="week">
+      <div class="wd" id="day-0">일</div><div class="wd" id="day-1">월</div><div class="wd" id="day-2">화</div>
+      <div class="wd" id="day-3">수</div><div class="wd" id="day-4">목</div><div class="wd" id="day-5">금</div><div class="wd" id="day-6">토</div>
+    </div>
+    <div class="times">
+      <div class="trow"><span class="ttag">평일</span><span id="time-weekday">월·화·수·금 오후 8시</span></div>
+      <div class="trow"><span class="ttag">주말</span><span id="time-weekend">토·일 오후 1시</span></div>
+      <div class="trow"><span class="ttag">휴방</span><span id="time-off">목요일</span></div>
+    </div>
+  </section>
+
+  <!-- 팬 캐릭터 -->
+  <section class="sec" style="background:#fff">
+    <div class="sec-label"><span class="mk">✦</span> 팬 캐릭터 <span class="ln"></span></div>
+    <div class="fan">
+      <img id="fan-img" class="fan-thumb" src="" alt="" style="display:none" onerror="this.style.display='none';document.getElementById('fan-emoji').style.display='flex'">
+      <div class="fan-emoji" id="fan-emoji">🐶</div>
+      <div class="fan-info">
+        <div class="fan-name" id="fan-name">별뭉이</div>
+        <div class="fan-nick">팬닉 · <span id="fan-nick">★ or [뭉]</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 좋아/싫어 -->
+  <section class="sec" style="background:#fff">
+    <div class="sec-label"><span class="mk">♡</span> 좋아 · 싫어 <span class="ln"></span></div>
+    <div class="pref">
+      <div class="pref-good">
+        <div class="pref-head">💙 좋아하는 것</div>
+        <div class="chips">
+          <span class="tag" id="like1">바다</span><span class="tag" id="like2">별</span>
+          <span class="tag" id="like3">잔잔한 노래</span><span class="tag" id="like4">디저트</span>
+        </div>
+      </div>
+      <div class="pref-bad">
+        <div class="pref-head">🤍 싫어하는 것</div>
+        <div class="chips">
+          <span class="tag bad" id="dislike1">시끄러운 것</span><span class="tag bad" id="dislike2">무례한 것</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TMI -->
+  <section class="sec" style="background:#fff">
+    <div class="sec-label"><span class="mk">♡</span> TMI <span class="ln"></span></div>
+    <div class="tmi">
+      <div class="tmi-row"><span class="tmi-ic">🍰</span><div><div class="tmi-k">좋아하는 음식</div><div class="tmi-v" id="tmi-food">딸기 케이크</div></div></div>
+      <div class="tmi-row"><span class="tmi-ic">🎵</span><div><div class="tmi-k">요즘 듣는 노래</div><div class="tmi-v" id="tmi-song">잔잔한 시티팝</div></div></div>
+      <div class="tmi-row"><span class="tmi-ic">📖</span><div><div class="tmi-k">최근 본 것</div><div class="tmi-v" id="tmi-book">바다 다큐멘터리</div></div></div>
+    </div>
+  </section>
+
+  <!-- 링크 -->
+  <section class="sec" style="background:#fff">
+    <div class="sec-label"><span class="mk">📌</span> 관련 링크 <span class="ln"></span></div>
+    <div class="links">
+      <a id="link-soop" class="lk" href="#" target="_blank"><span class="lk-ic">🎬</span> SOOP <span class="lk-go">›</span></a>
+      <a id="link-youtube" class="lk" href="#" target="_blank"><span class="lk-ic">▶</span> YouTube <span class="lk-go">›</span></a>
+      <a id="link-fancafe" class="lk" href="#" target="_blank"><span class="lk-ic">☕</span> 팬카페 <span class="lk-go">›</span></a>
+      <a id="link-wiki" class="lk" href="#" target="_blank"><span class="lk-ic">📘</span> 하츠위키 <span class="lk-go">›</span></a>
+      <a id="link-fancim" class="lk" href="#" target="_blank"><span class="lk-ic">✦</span> 팬심 <span class="lk-go">›</span></a>
+      <a id="link-x" class="lk" href="#" target="_blank"><span class="lk-ic">✕</span> X (트위터) <span class="lk-go">›</span></a>
+    </div>
+  </section>
+
+  <div class="foot">© 2026 하츠 팬페이지 ✦</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase.js"></script>
+<script>
+  const defaults = {
+    'head-sub': '', quote: '안녕! 오늘도\n와줘서 고마워 ✦', 'hero-name': 'HATZ',
+    msg: '방송에서 만나요!', avatar: '',
+    'info-name': '하츠', 'info-birth': '6월 14일', 'info-height': '166cm',
+    'info-mbti': 'INTJ', 'info-debut': '25.12.13', 'info-catchphrase': '청초한 선장 ⚓',
+    'info-tags': '차분,계획적,다정',
+    days: '0,1,2,3,5,6',
+    'time-weekday': '월·화·수·금 오후 8시', 'time-weekend': '토·일 오후 1시', 'time-off': '목요일',
+    'fan-name': '별뭉이', 'fan-nick': '★ or [뭉]', 'fan-img': '',
+    like1: '바다', like2: '별', like3: '잔잔한 노래', like4: '디저트',
+    dislike1: '시끄러운 것', dislike2: '무례한 것',
+    'tmi-food': '딸기 케이크', 'tmi-song': '잔잔한 시티팝', 'tmi-book': '바다 다큐멘터리',
+    'link-soop': '#', 'link-youtube': '#', 'link-fancafe': '#', 'link-wiki': '#', 'link-fancim': '#', 'link-x': '#',
+  };
+  const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+  async function load() {
+    let saved = {};
+    try {
+      const { data, error } = await db.from('profile').select('data').eq('id', 1);
+      if (error) console.log('profile error:', error);
+      if (data && data.length > 0 && data[0].data) saved = data[0].data;
+    } catch (e) { console.log('profile load error', e); }
+    const d = { ...defaults, ...saved };
+
+    if (d.avatar) { const i = document.getElementById('portrait'); i.src = d.avatar; i.style.display = 'block'; i.parentNode.querySelector('.ph').style.display = 'none'; }
+    if (d['fan-img']) { const fi = document.getElementById('fan-img'); fi.src = d['fan-img']; fi.style.display = 'block'; document.getElementById('fan-emoji').style.display = 'none'; }
+
+    document.getElementById('head-sub').textContent = d['head-sub'] || '';
+    document.getElementById('quote').innerHTML = (d.quote || '').replace(/\n/g, '<br>');
+    document.getElementById('msg').innerHTML = (d.msg || '').replace(/\n/g, '<br>');
+
+    ['hero-name','info-name','info-birth','info-height','info-mbti','info-debut','info-catchphrase',
+     'time-weekday','time-weekend','time-off','fan-name','fan-nick',
+     'like1','like2','like3','like4','dislike1','dislike2','tmi-food','tmi-song','tmi-book'].forEach(id => setText(id, d[id]));
+
+    const tagsEl = document.getElementById('info-tags');
+    if (tagsEl && d['info-tags']) tagsEl.innerHTML = d['info-tags'].split(',').map(t => `<span class="tag">${t.trim()}</span>`).join('');
+
+    ['soop','youtube','fancafe','wiki','fancim','x'].forEach(k => {
+      const el = document.getElementById('link-' + k);
+      if (el && d['link-' + k] && d['link-' + k] !== '#') el.href = d['link-' + k];
+    });
+
+    const onDays = (d.days || '').split(',').map(x => x.trim());
+    for (let i = 0; i <= 6; i++) { const c = document.getElementById('day-' + i); if (c) c.className = 'wd' + (onDays.includes(String(i)) ? ' on' : ''); }
+  }
+  load();
+  enableIframeAutoHeight();
+</script>
+</body>
+</html>

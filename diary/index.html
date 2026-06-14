@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하츠 · 일기</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .diary-list { display: flex; flex-direction: column; gap: 10px; }
+    .diary-item {
+      background: #fff; border-radius: var(--radius-md); border: 1px solid var(--ice-light);
+      padding: 16px 20px; cursor: pointer; transition: all var(--transition);
+    }
+    .diary-item:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+    .diary-header { display: flex; align-items: center; gap: 12px; }
+    .diary-mood { font-size: 24px; flex-shrink: 0; }
+    .diary-meta { flex: 1; }
+    .diary-title { font-size: 15px; font-weight: 600; color: var(--ice-ink); }
+    .diary-date { font-size: 12px; color: var(--silver); margin-top: 2px; }
+    .diary-arrow { color: var(--ice-light); font-size: 18px; transition: transform var(--transition); }
+    .diary-item.open .diary-arrow { transform: rotate(90deg); color: var(--ice); }
+    .diary-content {
+      font-family: var(--hand); font-size: 20px; color: var(--text); line-height: 1.8;
+      max-height: 0; overflow: hidden; transition: max-height 0.4s; white-space: pre-wrap;
+    }
+    .diary-item.open .diary-content {
+      max-height: 3000px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--ice-light);
+    }
+  </style>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a href="../index.html" class="nav-logo">하츠 <span class="star">✦</span></a>
+  <a href="../index.html">프로필</a>
+  <a href="../notice/">공지</a>
+  <a href="../schedule/">일정</a>
+  <a href="../work/">업보</a>
+  <a href="index.html" class="active">일기</a>
+</div></nav>
+
+<div class="container">
+  <div class="page-title">일기</div>
+  <div class="page-subtitle">하츠의 방송 일기예요 ✦</div>
+  <div class="card">
+    <div class="diary-list" id="diary-list"><div class="spinner"></div></div>
+  </div>
+  <div class="pagination" id="pagination"></div>
+</div>
+<footer>© 2026 하츠 팬페이지 ✦</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../supabase.js"></script>
+<script>
+  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  const PAGE_SIZE = 15;
+  let allData = [], currentPage = 1;
+
+  async function init() {
+    allData = await fetchAll('diary', { order: 'diary_date', asc: false });
+    renderPage(1);
+    enableIframeAutoHeight();
+  }
+  function renderPage(page) {
+    currentPage = page;
+    const start = (page - 1) * PAGE_SIZE;
+    const items = allData.slice(start, start + PAGE_SIZE);
+    const el = document.getElementById('diary-list');
+    if (!allData.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">✦</div>일기가 없어요</div>'; document.getElementById('pagination').innerHTML=''; return; }
+    el.innerHTML = items.map(d => `
+      <div class="diary-item" onclick="this.classList.toggle('open')">
+        <div class="diary-header">
+          <span class="diary-mood">${d.mood || '✦'}</span>
+          <div class="diary-meta">
+            <div class="diary-title">${esc(d.title)}</div>
+            <div class="diary-date">${esc(d.diary_date) || ''}</div>
+          </div>
+          <span class="diary-arrow">›</span>
+        </div>
+        <div class="diary-content">${d.image_url ? `<img src="${d.image_url}" class="post-img" loading="lazy" alt="">` : ''}${esc(d.content)}</div>
+      </div>`).join('');
+
+    const totalPages = Math.ceil(allData.length / PAGE_SIZE);
+    const pg = document.getElementById('pagination');
+    pg.innerHTML = '';
+    if (totalPages > 1) {
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn' + (i === page ? ' active' : '');
+        btn.textContent = i;
+        btn.onclick = () => { renderPage(i); enableIframeAutoHeight(); };
+        pg.appendChild(btn);
+      }
+    }
+  }
+  init();
+</script>
+</body>
+</html>

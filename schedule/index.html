@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하츠 · 일정</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .sched-list { display: flex; flex-direction: column; gap: 10px; }
+    .sched-item {
+      display: flex; gap: 14px; align-items: stretch;
+      background: #fff; border-radius: var(--radius-md);
+      border: 1px solid var(--ice-light); padding: 14px 16px;
+      transition: all var(--transition);
+    }
+    .sched-item:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+    .sched-date {
+      flex-shrink: 0; width: 58px; text-align: center;
+      background: var(--ice-soft); border-radius: var(--radius-sm);
+      display: flex; flex-direction: column; justify-content: center; padding: 8px 0;
+    }
+    .sched-d { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--ice-deep); line-height: 1; }
+    .sched-m { font-size: 11px; color: var(--silver); margin-top: 3px; }
+    .sched-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+    .sched-title { font-size: 15px; font-weight: 600; color: var(--ice-ink); }
+    .sched-meta { font-size: 12px; color: var(--silver); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .sched-note { font-size: 13px; color: var(--text-mid); }
+    .type-특별 { background: #fef0d6; color: #b07d18; }
+    .type-콜라보 { background: #e3dcf7; color: #5b4ab7; }
+    .type-휴방 { background: #f0f2f5; color: #97a4b3; }
+  </style>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a href="../index.html" class="nav-logo">하츠 <span class="star">✦</span></a>
+  <a href="../index.html">프로필</a>
+  <a href="../notice/">공지</a>
+  <a href="index.html" class="active">일정</a>
+  <a href="../work/">업보</a>
+  <a href="../diary/">일기</a>
+</div></nav>
+
+<div class="container">
+  <div class="page-title">방송 일정</div>
+  <div class="page-subtitle">다가오는 방송을 확인하세요 ✦</div>
+  <div class="card">
+    <div class="sched-list" id="sched-list"><div class="spinner"></div></div>
+  </div>
+</div>
+<footer>© 2026 하츠 팬페이지 ✦</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../supabase.js"></script>
+<script>
+  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  async function init() {
+    const data = await fetchAll('schedule', { order: 'date', asc: true });
+    const el = document.getElementById('sched-list');
+    if (!data.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">✦</div>등록된 일정이 없어요</div>'; enableIframeAutoHeight(); return; }
+    el.innerHTML = data.map(s => {
+      const dt = new Date(s.date + 'T00:00:00');
+      const day = isNaN(dt) ? '–' : dt.getDate();
+      const mon = isNaN(dt) ? '' : (dt.getMonth()+1) + '월';
+      const tClass = ['특별','콜라보','휴방'].includes(s.type) ? 'type-' + s.type : 'badge-ice';
+      return `
+        <div class="sched-item">
+          <div class="sched-date"><div class="sched-d">${day}</div><div class="sched-m">${mon}</div></div>
+          <div class="sched-body">
+            <div class="sched-title">${esc(s.title)}</div>
+            <div class="sched-meta">
+              ${s.type ? `<span class="badge ${tClass}">${esc(s.type)}</span>` : ''}
+              ${s.time ? `<span>🕐 ${esc(s.time)}</span>` : ''}
+            </div>
+            ${s.note ? `<div class="sched-note">${esc(s.note)}</div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+    enableIframeAutoHeight();
+  }
+  init();
+</script>
+</body>
+</html>

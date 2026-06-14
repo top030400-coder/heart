@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하츠 · 공지</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .notice-list { display: flex; flex-direction: column; gap: 10px; }
+    .notice-item {
+      background: #fff; border-radius: var(--radius-md);
+      border: 1px solid var(--ice-light);
+      padding: 16px 20px; cursor: pointer; transition: all var(--transition);
+    }
+    .notice-item:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+    .notice-item.pinned { border-left: 4px solid var(--ice); background: var(--ice-soft); }
+    .notice-header { display: flex; align-items: center; gap: 10px; }
+    .notice-pin { font-size: 11px; background: var(--ice); color: #fff; padding: 2px 9px; border-radius: 999px; font-weight: 700; }
+    .notice-title { font-size: 15px; font-weight: 600; color: var(--ice-ink); flex: 1; }
+    .notice-date { font-size: 12px; color: var(--silver); }
+    .notice-arrow { color: var(--ice-light); font-size: 18px; transition: transform var(--transition); }
+    .notice-item.open .notice-arrow { transform: rotate(90deg); color: var(--ice); }
+    .notice-content {
+      font-size: 14px; color: var(--text-mid); line-height: 1.8;
+      max-height: 0; overflow: hidden; transition: max-height 0.35s; white-space: pre-wrap;
+    }
+    .notice-item.open .notice-content {
+      max-height: 3000px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--ice-light);
+    }
+    .notice-count { font-size: 13px; color: var(--silver); margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a href="../index.html" class="nav-logo">하츠 <span class="star">✦</span></a>
+  <a href="../index.html">프로필</a>
+  <a href="index.html" class="active">공지</a>
+  <a href="../schedule/">일정</a>
+  <a href="../work/">업보</a>
+  <a href="../diary/">일기</a>
+</div></nav>
+
+<div class="container">
+  <div class="page-title">공지사항</div>
+  <div class="page-subtitle">하츠의 공지사항이에요 ✦</div>
+  <div class="card">
+    <div class="notice-count" id="count"></div>
+    <div class="notice-list" id="notice-list"><div class="spinner"></div></div>
+  </div>
+</div>
+<footer>© 2026 하츠 팬페이지 ✦</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../supabase.js"></script>
+<script>
+  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  async function init() {
+    const data = await fetchAll('notice', { order: 'created_at', asc: false });
+    const all = [...data.filter(n => n.pinned), ...data.filter(n => !n.pinned)];
+    const el = document.getElementById('notice-list');
+    document.getElementById('count').textContent = `총 ${all.length}개의 공지`;
+    if (!all.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">✦</div>공지사항이 없어요</div>'; enableIframeAutoHeight(); return; }
+    el.innerHTML = all.map(n => {
+      const dt = new Date(n.created_at);
+      const ds = `${dt.getFullYear()}.${String(dt.getMonth()+1).padStart(2,'0')}.${String(dt.getDate()).padStart(2,'0')}`;
+      return `
+        <div class="notice-item${n.pinned?' pinned':''}" onclick="this.classList.toggle('open')">
+          <div class="notice-header">
+            ${n.pinned ? '<span class="notice-pin">고정</span>' : ''}
+            <span class="notice-title">${esc(n.title)}</span>
+            <span class="notice-date">${ds}</span>
+            <span class="notice-arrow">›</span>
+          </div>
+          <div class="notice-content">${n.image_url ? `<img src="${n.image_url}" class="post-img" loading="lazy" alt="">` : ''}${esc(n.content)}</div>
+        </div>`;
+    }).join('');
+    enableIframeAutoHeight();
+  }
+  init();
+</script>
+</body>
+</html>

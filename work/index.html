@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하츠 · 업보</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .work-list { display: flex; flex-direction: column; gap: 10px; }
+    .work-item {
+      background: #fff; border-radius: var(--radius-md); border: 1px solid var(--ice-light);
+      padding: 16px 18px; transition: all var(--transition);
+    }
+    .work-item:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+    .work-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .work-nick { font-size: 13px; font-weight: 700; color: var(--ice-deep); background: var(--ice-soft); padding: 3px 12px; border-radius: 999px; }
+    .work-date { font-size: 12px; color: var(--silver); margin-left: auto; }
+    .work-title { font-size: 15px; font-weight: 500; color: var(--ice-ink); }
+    .work-desc { font-size: 13px; color: var(--text-mid); margin-top: 4px; }
+    .work-cat { font-size: 11px; color: var(--ice); font-weight: 600; margin-top: 6px; }
+  </style>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a href="../index.html" class="nav-logo">하츠 <span class="star">✦</span></a>
+  <a href="../index.html">프로필</a>
+  <a href="../notice/">공지</a>
+  <a href="../schedule/">일정</a>
+  <a href="index.html" class="active">업보</a>
+  <a href="../diary/">일기</a>
+</div></nav>
+
+<div class="container">
+  <div class="page-title">업보</div>
+  <div class="page-subtitle">방송에서 벌어진 사건사고 모음 ✦</div>
+  <div class="card">
+    <div class="work-list" id="work-list"><div class="spinner"></div></div>
+  </div>
+</div>
+<footer>© 2026 하츠 팬페이지 ✦</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../supabase.js"></script>
+<script>
+  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  async function init() {
+    const data = await fetchAll('work', { order: 'created_at', asc: false });
+    const el = document.getElementById('work-list');
+    if (!data.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">✦</div>등록된 업보가 없어요</div>'; enableIframeAutoHeight(); return; }
+    el.innerHTML = data.map(w => `
+      <div class="work-item">
+        <div class="work-top">
+          ${w.nickname ? `<span class="work-nick">${esc(w.nickname)}</span>` : ''}
+          ${w.event_date ? `<span class="work-date">${esc(w.event_date)}</span>` : ''}
+        </div>
+        <div class="work-title">${esc(w.title)}</div>
+        ${w.description ? `<div class="work-desc">${esc(w.description)}</div>` : ''}
+        ${w.category ? `<div class="work-cat">＃${esc(w.category)}</div>` : ''}
+      </div>`).join('');
+    enableIframeAutoHeight();
+  }
+  init();
+</script>
+</body>
+</html>
