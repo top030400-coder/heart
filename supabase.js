@@ -5,8 +5,8 @@
    ✅ Storage 버킷 이름은 'hatz' 로 만들어 주세요 (Public)
    ============================================= */
 
-const SUPABASE_URL  = 'https://여기에-본인-프로젝트.supabase.co';
-const SUPABASE_ANON = '여기에-본인-anon-public-키';
+const SUPABASE_URL  = 'https://amsffsgufzdodqqjkjie.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtc2Zmc2d1Znpkb2RxcWpramllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NjIxOTcsImV4cCI6MjA5NzAzODE5N30.-9LyYODZNTi9W5psXsDmHzo38DyFAME9CdoY8EmDEIE';
 
 const STORAGE_BUCKET = 'hatz';
 
