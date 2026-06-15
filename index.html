@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="style.css">
   <style>
     body { padding: 0; }
-    .stage { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+    .stage { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; }
 
     /* ===== 히어로 (풀블리드) ===== */
     .hero {
@@ -153,7 +153,7 @@
     .tmi-v { font-size: 15px; color: var(--ice-ink); margin-top: 2px; }
 
     /* 링크 (풀폭 리스트) */
-    .links { display: flex; flex-direction: column; gap: 9px; }
+    .links { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
     .lk {
       display: flex; align-items: center; gap: 12px;
       padding: 15px 18px; border-radius: var(--radius-md);
@@ -186,7 +186,6 @@
   <header class="hero">
     <span class="hero-star" style="left:14%">✦</span>
     <span class="hero-star" style="right:16%;top:64px;font-size:14px">✦</span>
-    <div class="eyebrow">Captain's Log</div>
     <div class="portrait">
       <span class="portrait-ring"></span>
       <img id="portrait" src="" alt="" style="display:none" onerror="this.style.display='none';this.parentNode.querySelector('.ph').style.display='flex'">
